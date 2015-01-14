@@ -1,2 +1,1 @@
-# my-monitoring-dashboard
-a monitoring dashboard for specific needs
+Check out http://fabiocaseri.github.io/dashing-js for more information.
