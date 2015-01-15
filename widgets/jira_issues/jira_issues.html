@@ -1,0 +1,14 @@
+<h1 class="title" data-bind="title"></h1>
+
+<ul class="list-nostyle">
+    <li class="header">
+        <span class="label">Assignee</span>
+        <span class="status">Open</span>
+        <span class="status">Resolved</span>
+    </li>
+    <li data-foreach-item="items">
+        <span class="label" data-bind="item.name"></span>
+        <span class="status" data-bind="item.statuses.open"></span>
+        <span class="status" data-bind="item.statuses.resolved"></span>
+    </li>
+</ul>

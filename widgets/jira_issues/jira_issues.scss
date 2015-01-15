@@ -1,0 +1,53 @@
+// ----------------------------------------------------------------------------
+// Sass declarations
+// ----------------------------------------------------------------------------
+$background-color:  #12b0c5;
+$value-color:       #fff;
+
+$title-color:       rgba(255, 255, 255, 0.9);
+$label-color:       rgba(255, 255, 255, 0.9);
+$moreinfo-color:    rgba(255, 255, 255, 0.9);
+
+// ----------------------------------------------------------------------------
+// Widget-list styles
+// ----------------------------------------------------------------------------
+.widget-jira-issues {
+
+    background-color: $background-color;
+    vertical-align: top !important;
+
+    .title {
+        color: $title-color;
+    }
+
+    ul {
+        display: table;
+        width: 100%;
+        margin: 0 15px;
+        text-align: left;
+        color: $label-color;
+    }
+
+    li {
+        display: table-row;
+        margin-bottom: 5px;
+
+        span {
+            display: table-cell;
+        }
+
+        &.header {
+            font-weight: bold;
+            border-bottom: 1px solid white;
+        }
+    }
+
+    .list-nostyle {
+        list-style: none;
+    }
+
+    .status {
+
+    }
+
+}
