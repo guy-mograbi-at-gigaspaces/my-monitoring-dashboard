@@ -1,12 +1,12 @@
 // ----------------------------------------------------------------------------
 // Sass declarations
 // ----------------------------------------------------------------------------
-$background-color:  #12b0c5;
+$background-color:  #9c4274;
 $value-color:       #fff;
 
 $title-color:       rgba(255, 255, 255, 0.9);
 $label-color:       rgba(255, 255, 255, 0.9);
-$moreinfo-color:    rgba(255, 255, 255, 0.9);
+$update-color:      #622B4A;
 
 // ----------------------------------------------------------------------------
 // Widget-list styles
@@ -46,8 +46,8 @@ $moreinfo-color:    rgba(255, 255, 255, 0.9);
         list-style: none;
     }
 
-    .status {
-
+    .updated-at {
+        color: #622B4A;
     }
 
 }
