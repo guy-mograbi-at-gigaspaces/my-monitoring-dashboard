@@ -1,15 +1,16 @@
 'use strict';
 
+var config = require('../config');
 var https = require('https');
 var userIssues = {};
 
 function getIssues(fnCallback) {
-    https.get('https://cloudifysource.atlassian.net/rest/api/latest/search?jql=project=CFY%20and%20component=UI&fields=assignee,status&maxResults=1000', function(res){
+    https.get(config.jira.apiUrl + '/search?jql=project=CFY%20and%20component=UI&fields=assignee,status&maxResults=1000', function (res) {
         var result = '';
-        res.on('data', function(chunk) {
+        res.on('data', function (chunk) {
             result += chunk;
         });
-        res.on('end', function() {
+        res.on('end', function () {
             var obj = JSON.parse(result);
             fnCallback(obj);
         });
@@ -29,7 +30,7 @@ function addUserIssue(issue) {
     try {
         var userKey = issue.fields.assignee.key;
         var userName = issue.fields.assignee.displayName;
-        if(!userIssues.hasOwnProperty(userKey)) {
+        if (!userIssues.hasOwnProperty(userKey)) {
             userIssues[userKey] = {
                 name: userName,
                 statuses: {
@@ -40,49 +41,28 @@ function addUserIssue(issue) {
         }
         addUserIssueStatus(userKey, issue.fields.status.name.toLowerCase());
     }
-    catch(e) {
+    catch (e) {
         console.log('addUserIssue:error', e, issue);
     }
 }
 
 function addUserIssueStatus(userKey, status) {
-    if(userIssues[userKey].statuses.hasOwnProperty(status)) {
+    if (userIssues[userKey].statuses.hasOwnProperty(status)) {
         userIssues[userKey].statuses[status] += 1;
     }
 }
 
-getIssues(function(response){
-    getUsersIssues(response, function(){
-        var data = [];
-        for (var i in userIssues) {
-            data.push(userIssues[i]);
-        }
-        send_event('jira-issues', { items: data });
+function startJob() {
+    getIssues(function (response) {
+        getUsersIssues(response, function () {
+            var data = [];
+            for (var i in userIssues) {
+                data.push(userIssues[i]);
+            }
+            send_event('jira-issues', {items: data});
+        });
     });
-});
+}
 
-
-//var jiraUsers = [
-//    {
-//        name: 'Itsik',
-//        statuses: {
-//            'open': 15,
-//            'resolved': 23
-//        }
-//    },
-//    {
-//        name: 'Guy',
-//        statuses: {
-//            'open': 63,
-//            'resolved': 101
-//        }
-//    },
-//    {
-//        name: 'Erez',
-//        statuses: {
-//            'open': 18,
-//            'resolved': 32
-//        }
-//    }
-//];
-//send_event('jira', { items: jiraUsers });
+setInterval(startJob, config.pullingTime);
+startJob();
