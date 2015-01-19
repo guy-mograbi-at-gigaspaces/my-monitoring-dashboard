@@ -9,7 +9,7 @@ var github = new GitHubApi({
 
 github.authenticate({
     type: "oauth",
-    token: "24e94f3392033aacff89e26ebc9c5b670d0083c9"
+    token: config.github.token
 });
 
 function updatePullRequests() {

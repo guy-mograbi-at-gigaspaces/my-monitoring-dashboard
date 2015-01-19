@@ -2,6 +2,8 @@
 
 var config = require('../config');
 var https = require('https');
+var log4js = require('log4js');
+var logger = log4js.getLogger('config');
 var userIssues = {};
 
 function getIssues(fnCallback) {
@@ -42,7 +44,7 @@ function addUserIssue(issue) {
         addUserIssueStatus(userKey, issue.fields.status.name.toLowerCase());
     }
     catch (e) {
-        console.log('addUserIssue:error', e, issue);
+        logger.info('addUserIssue:error', e, issue);
     }
 }
 

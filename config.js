@@ -1,20 +1,15 @@
 var _ = require('lodash');
+var log4js = require('log4js');
+var logger = log4js.getLogger('config');
+var config = require('./prod.json');
 var meConf = null;
 
 try {
-    meConf = require('./meConf');
+    meConf = require('./dev/meConf');
 }
 catch(e) {
-    console.warn('(optional) meConf.json is missing.');
+    logger.warn('(optional) meConf.json is missing.');
 }
-
-// Default Configuration
-var config = {
-    pullingTime: 1000 * 60 * 10,
-    jira: {
-        apiUrl: ''
-    }
-};
 
 function getConfig() {
     if(meConf !== null) {
