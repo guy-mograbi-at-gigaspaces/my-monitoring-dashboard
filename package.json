@@ -5,7 +5,9 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "dashing-js": "~0.1.5"
+    "dashing-js": "~0.1.5",
+    "github": "^0.2.3",
+    "http": "0.0.0"
   },
   "engine": "node >= 0.10"
 }

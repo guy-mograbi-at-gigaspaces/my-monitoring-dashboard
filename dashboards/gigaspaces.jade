@@ -1,0 +1,21 @@
+extends layout
+block title
+    | GigaSpaces Dashboard
+block content
+    div.gridster
+        ul
+            li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
+                div(data-view='Image', data-image='/gigaspaces-cloudify.jpg' style='background-color: #ffffff')
+            li(data-row='1', data-col='1', data-sizex='2', data-sizey='1')
+                div(data-id='jira-issues', data-view='Jira_issues', data-unordered='true', data-title='JIRA Issues', data-moreinfo='# of issues per user')
+            li(data-row='1' data-col='1' data-sizex='1' data-sizey='1')
+                div(data-id='jira-status-pie' data-view='Fullpie' data-title='Cloudify UI Jira Status')
+            li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
+                div(data-id='github', data-view='Number', data-title='Pull Requests')
+block scripts
+    script.
+        $(function() {
+            // These settings override the defaults set in application.coffee. You can do this on a per dashboard basis.
+            Dashing.widget_base_dimensions = [370, 370]
+            Dashing.numColumns = 3
+        });
