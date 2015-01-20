@@ -1,0 +1,16 @@
+<h1 class="title" data-bind="title"></h1>
+
+<ul class="list-nostyle">
+    <li class="header">
+        <span class="label">Repository</span>
+        <span class="status">Requests</span>
+        <span class="status">Issues</span>
+    </li>
+    <li data-foreach-item="items">
+        <span class="label" data-bind="item.name"></span>
+        <span class="requests" data-bind="item.requests"></span>
+        <span class="issues" data-bind="item.issues"></span>
+    </li>
+</ul>
+
+<p class="updated-at" data-bind="updatedAtMessage"></p>
