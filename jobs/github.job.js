@@ -1,3 +1,4 @@
+var config = require('../config');
 var GitHubApi = require("github");
 var currentRequests = 0;
 
@@ -8,7 +9,7 @@ var github = new GitHubApi({
 
 github.authenticate({
     type: "oauth",
-    token: "24e94f3392033aacff89e26ebc9c5b670d0083c9"
+    token: config.github.token
 });
 
 function updatePullRequests() {
@@ -16,12 +17,12 @@ function updatePullRequests() {
         user: 'cloudify-cosmo',
         repo: 'cloudify-ui',
         state: 'open'
-    }, function(err, res) {
+    }, function (err, res) {
         var lastRequests = currentRequests;
         currentRequests = res.length;
-        send_event('github', { current: currentRequests, last: lastRequests });
+        send_event('github', {current: currentRequests, last: lastRequests});
     });
 }
 
-setInterval(updatePullRequests, 1000 * 60 * 10);
+setInterval(updatePullRequests, config.pullingTime);
 updatePullRequests();

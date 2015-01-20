@@ -1,5 +1,6 @@
 'use strict';
 
+var config = require('../config');
 var https = require('https');
 var statuses = {
     Open: 0,
@@ -8,12 +9,12 @@ var statuses = {
 };
 
 function getStatusData(fnCallback) {
-    https.get('https://cloudifysource.atlassian.net/rest/api/latest/search?jql=project=CFY%20and%20component=UI&fields=status&maxResults=1000', function(res){
+    https.get(config.jira.apiUrl + '/search?jql=project=CFY%20and%20component=UI&fields=status&maxResults=1000', function (res) {
         var result = '';
-        res.on('data', function(chunk) {
+        res.on('data', function (chunk) {
             result += chunk;
         });
-        res.on('end', function() {
+        res.on('end', function () {
             var obj = JSON.parse(result);
             fnCallback(obj);
         });
@@ -30,30 +31,25 @@ function addStatusRecord(response, fnCallback) {
 }
 
 function countStatus(status) {
-    if(statuses.hasOwnProperty(status)) {
+    if (statuses.hasOwnProperty(status)) {
         statuses[status] += 1;
     }
 }
 
-getStatusData(function(response){
-    addStatusRecord(response, function(){
-        var data = [];
-        for (var status in statuses) {
-            data.push({
-                label: status,
-                value: statuses[status]
-            });
-        }
-        send_event('jira-status-pie', { value: data })
+function startJob() {
+    getStatusData(function (response) {
+        addStatusRecord(response, function () {
+            var data = [];
+            for (var status in statuses) {
+                data.push({
+                    label: status,
+                    value: statuses[status]
+                });
+            }
+            send_event('jira-status-pie', {value: data})
+        });
     });
-});
+}
 
-
-//
-//var data = [
-//    { label: "Open", value: 16 },
-//    { label: "Closed", value: 34 },
-//    { label: "Resolved", value: 10 }
-//]
-//
-//send_event('jira-status-pie', { value: data })
+setInterval(startJob, config.pullingTime);
+startJob();

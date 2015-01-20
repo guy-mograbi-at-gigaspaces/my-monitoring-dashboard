@@ -1,0 +1,9 @@
+{
+  "pullingTime": 600000,
+  "jira": {
+    "apiUrl": "JIRA-API-URL"
+  },
+  "github": {
+    "token": "GITHUB-TOKEN-KEY-HERE"
+  }
+}
