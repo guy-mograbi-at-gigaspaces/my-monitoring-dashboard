@@ -55,6 +55,7 @@ function addUserIssueStatus(userKey, status) {
 }
 
 function startJob() {
+    userIssues = {};
     getIssues(function (response) {
         getUsersIssues(response, function () {
             var data = [];

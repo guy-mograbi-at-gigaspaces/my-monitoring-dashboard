@@ -226,6 +226,7 @@ function getPullRequests() {
 function taskComplete() {
     tasksComplete++;
     if(tasksComplete === 2) {
+        tasksComplete = 0;
         sendPullRequestsEvent();
         sendTotalRequestsEvent();
         sendTotalIssuesEvent();
