@@ -22,6 +22,21 @@ function Github() {
         token: config.github.token
     });
 
+    function getReposByUser( user, fnCallback ) {
+        github.repos.getFromUser({ user: user }, function(err, res){
+            fnCallback(err, res);
+        });
+    }
+
+    function getRepo( user, repo, fnCallback ) {
+        github.repos.get({
+            user: user,
+            repo: repo
+        }, function(err, res){
+            fnCallback(err, res);
+        });
+    }
+
     /**
      * getPullRequests
      * @param repos List of repositories under the schema, for example:
@@ -90,6 +105,8 @@ function Github() {
         }
     }
 
+    this.getReposByUser = getReposByUser;
+    this.getRepo = getRepo;
     this.getPullRequests = getPullRequests;
     this.getIssues = getIssues;
 }
