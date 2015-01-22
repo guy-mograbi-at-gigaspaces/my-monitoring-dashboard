@@ -1,10 +1,12 @@
 'use strict';
 
 var GitHubApi = require("github");
-var config = require('../../config');
-var _ = require('lodash');
 
-function Github() {
+var _ = require('lodash');
+var async = require('async');
+var logger = require('log4js').getLogger('github.module');
+
+function Github( config ) {
 
     /**
      * Initialize Github
@@ -20,7 +22,7 @@ function Github() {
      */
     github.authenticate({
         type: "oauth",
-        token: config.github.token
+        token: config.token
     });
 
     /**
@@ -29,10 +31,79 @@ function Github() {
      * @param user - owner login name
      * @param fnCallback - Callback function
      */
-    function getReposByUser( user, fnCallback ) {
-        github.repos.getFromUser({ user: user }, function(err, res){
-            fnCallback(err, res);
-        });
+    function getReposByUser(  fnCallback ) {
+        logger.debug('getting repositories per user');
+        github.repos.getFromUser({ user: config.user },  fnCallback );
+    }
+
+    function getReposByOrganization( organization , callback ){
+        github.repos.getFromOrg({org: organization}, callback);
+    }
+
+    /**
+     * Gets repositories from user and from user's organizations and appends them all together.
+     * @param callback
+     * @param {object} opts
+     * @param {boolean} [opts.ignoreForks=true] to ignore forks or not
+     */
+    function getAllRepositories(  opts, callback ){
+
+        logger.debug('getting all repositories');
+        var result = [];
+
+
+        async.waterfall(
+            [
+                function getForUser( callback ){ // gets repositories from user
+                    getReposByUser(  function(err, repos){
+                        if ( !!err ){
+                            callback(err);
+                            return;
+                        }
+                        logger.debug('got repositories for user');
+                        result = result.concat(repos);
+                        callback();
+                    });
+                },
+                function getOrganizations( callback ){ //get organizations
+                    logger.debug('getting organizations');
+                    // get all organization
+                    github.user.getOrgs( { user: config.user }, function( err, orgs ){
+                        if ( !!err ){
+                            callback(err);
+                            return;
+                        }
+                        //logger.debug('got orgs', orgs);
+                        async.each(orgs, function( item, callback ){ // for each organization, get repositories
+                            getReposByOrganization( item.login, function( err, repos ){
+                                if ( !!err ){
+                                    callback(err);
+                                    return;
+                                }
+                                result = result.concat( repos );
+                                callback();
+                            } );
+                        }, function allDone( err ){
+                            callback(err);
+                        })
+
+                    });
+                }
+
+
+            ], function(err){
+                if ( !!err ){
+                    logger.error('unable to get repositories', err);
+
+                }
+                // ignore or don't ignore forks
+                if ( !!opts.ignoreForks ){
+                    result = _.filter(result, {'fork' : false });
+                }
+
+                callback(err, result);
+            }
+        )
     }
 
     /**
@@ -124,6 +195,7 @@ function Github() {
     this.getRepo = getRepo;
     this.getPullRequests = getPullRequests;
     this.getIssues = getIssues;
+    this.getAllRepositories = getAllRepositories;
 }
 
-module.exports = new Github;
+module.exports = Github;
