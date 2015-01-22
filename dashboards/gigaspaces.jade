@@ -15,17 +15,17 @@ block content
                 div(data-id='github_total_issues', data-view='Number', data-title='Total Issues', data-moreinfo='In Issues', style="background-color: #BB4747")
 
             li(data-row='1', data-col='2', data-sizex='2', data-sizey='1')
-                div(data-id='jira-issues', data-view='Jira_issues', data-unordered='true', data-title='JIRA Issues', data-moreinfo='# of issues per user')
+                div(data-id='jira-issues', data-view='Jira_issues', data-unordered='true', data-title='Jira Issues', data-moreinfo='# of issues per user')
             li(data-row='1', data-col='1', data-sizex='2', data-sizey='2')
                 div(data-id='github_pull_requests', data-view='Github_pull_requests', data-unordered='true', data-title='Github Summary', data-moreinfo='# of open requests')
-            li(data-row='1' data-col='1' data-sizex='2' data-sizey='1')
-                div(data-id='jira-status-pie' data-view='Fullpie' data-title='Cloudify UI Jira Status')
+            li(data-row='1' data-col='1' data-sizex='1' data-sizey='1')
+                div(data-id='jira-status-pie' data-view='Fullpie' data-title='Jira Status')
 
 
 block scripts
     script.
         $(function() {
-            // Dashing.gridsterLayout('[{"col":1,"row":1,"size_x":1,"size_y":1},{"col":1,"row":2,"size_x":2,"size_y":1},{"col":3,"row":2,"size_x":1,"size_y":1},{"col":3,"row":1,"size_x":2,"size_y":1},{"col":2,"row":1,"size_x":1,"size_y":1}]')
-            Dashing.widget_base_dimensions = [370, 370]
-            Dashing.numColumns = 4
+            Dashing.gridsterLayout('[{"col":1,"row":1,"size_x":1,"size_y":1},{"col":2,"row":1,"size_x":1,"size_y":1},{"col":3,"row":1,"size_x":1,"size_y":1},{"col":3,"row":2,"size_x":1,"size_y":1},{"col":1,"row":2,"size_x":2,"size_y":1},{"col":4,"row":1,"size_x":2,"size_y":2},{"col":1,"row":3,"size_x":2,"size_y":1}]')
+            Dashing.widget_base_dimensions = [370, 345]
+            Dashing.numColumns = 5
         });

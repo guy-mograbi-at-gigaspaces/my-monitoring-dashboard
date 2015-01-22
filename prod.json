@@ -1,11 +1,12 @@
 {
   "pullingTime": 600000,
   "jira": {
-    "apiUrl": "JIRA-API-URL"
+    "apiUrl": "JIRA-API-URL",
+    "execludeAssignees": ["write-assignee-display-name-here","and-another-here"]
   },
   "github": {
     "token": "GITHUB-TOKEN-KEY-HERE",
     "user": "GITHUB-USERNAME",
-    "excludeRepos": []
+    "excludeRepos": ["write-repo-name-here","and-another-here"]
   }
 }

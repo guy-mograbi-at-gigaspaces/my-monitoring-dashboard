@@ -1,7 +1,8 @@
+'use strict';
+
 var GitHubApi = require("github");
 var config = require('../../config');
 var _ = require('lodash');
-
 
 function Github() {
 
@@ -22,12 +23,25 @@ function Github() {
         token: config.github.token
     });
 
+    /**
+     * getReposByUser
+     * @description - get repositories by owner login name
+     * @param user - owner login name
+     * @param fnCallback - Callback function
+     */
     function getReposByUser( user, fnCallback ) {
         github.repos.getFromUser({ user: user }, function(err, res){
             fnCallback(err, res);
         });
     }
 
+    /**
+     * getRepo
+     * @description - get single repository with full data
+     * @param user - owner login name
+     * @param repo - repository name
+     * @param fnCallback - Callback function
+     */
     function getRepo( user, repo, fnCallback ) {
         github.repos.get({
             user: user,
@@ -39,7 +53,7 @@ function Github() {
 
     /**
      * getPullRequests
-     * @param repos List of repositories under the schema, for example:
+     * @param repos - List of repositories under the schema, for example:
      * {
      *      user: 'cloudify-cosmo',
      *      repo: 'cloudify-ui',
@@ -105,11 +119,11 @@ function Github() {
         }
     }
 
+    // Class Methods Index
     this.getReposByUser = getReposByUser;
     this.getRepo = getRepo;
     this.getPullRequests = getPullRequests;
     this.getIssues = getIssues;
 }
-
 
 module.exports = new Github;

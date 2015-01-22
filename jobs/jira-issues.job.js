@@ -1,27 +1,22 @@
 'use strict';
 
 var config = require('../config');
-var https = require('https');
+var jira = require('./modules/jira.module');
 var log4js = require('log4js');
 var logger = log4js.getLogger('config');
 var userIssues = {};
 
 function getIssues(fnCallback) {
-    https.get(config.jira.apiUrl + '/search?jql=project=CFY%20and%20component=UI&fields=assignee,status&maxResults=1000', function (res) {
-        var result = '';
-        res.on('data', function (chunk) {
-            result += chunk;
-        });
-        res.on('end', function () {
-            var obj = JSON.parse(result);
-            fnCallback(obj);
-        });
-    });
+    jira.getIssues({
+        jql: 'project=CFY and component=UI',
+        fields: 'assignee,status',
+        maxResults: '1000'
+    }, fnCallback);
 }
 
-function getUsersIssues(response, fnCallback) {
-    for (var i = 0; i < response.issues.length || fnCallback(); i++) {
-        var issue = response.issues[i];
+function getUsersIssues(issues, fnCallback) {
+    for (var i = 0; i < issues.length || fnCallback(); i++) {
+        var issue = issues[i];
         if (issue.fields.assignee !== null) {
             addUserIssue(issue);
         }
@@ -56,8 +51,8 @@ function addUserIssueStatus(userKey, status) {
 
 function startJob() {
     userIssues = {};
-    getIssues(function (response) {
-        getUsersIssues(response, function () {
+    getIssues(function (err, issues) {
+        getUsersIssues(issues, function () {
             var data = [];
             for (var i in userIssues) {
                 data.push(userIssues[i]);
