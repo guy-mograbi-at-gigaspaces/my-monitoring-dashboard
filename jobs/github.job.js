@@ -6,6 +6,7 @@ var logger = require('log4js').getLogger('github.job');
 logger.trace('github conf is', config.github);
 var github = new Github(config.github); // todo: support multiple configurations
 
+
 var repositories = {};
 var totalRequests = 0;
 var lastTotalRequests = 0;
@@ -16,66 +17,21 @@ function initRepositoriesData(repos, fnCallback) {
     for (var i = 0; i < repos.length || fnCallback(); i++) {
         var repo = repos[i];
         repositories[repo.name] = {
+            full_name: repo.full_name,
+            href : repo.html_url,
             requests: [],
             issues: 0
         }
     }
 }
 
-function getAllRepos(fnCallback) {
-    github.getAllRepositories({ignoreForks: true}, function (err, repos) {
-        try {
-            var reposList = [];
-
-            logger.debug('got repos');
-            if (config.github.hasOwnProperty('excludeRepos') && config.github.excludeRepos.length > 0) {
-                repos = _.remove(repos, function (repo) {
-                    return config.github.excludeRepos.indexOf(repo.name) === -1;
-                });
-            }
-
-            // lets handle forks. if fork, we must get upstream for real information
-            async.each(repos,
-
-                /**
-                 *
-                 * @description
-                 * this function handles one repository, checks if fork, if fork it fetches upstream
-                 *
-                 * @param repo a specific repository we want to handle
-                 * @param callback - called when finished working on this specific repository
-                 */
-                function handleRepo(repo, callback) { // for each repository
-
-                    logger.trace('processing', repo.name);
-                    if (repo.fork) { // if fork get upstream
-                        github.getRepo(repo.owner.login, repo.name, function (err, repoFork) {
-
-                            if (!!err) {
-                                logger.error('unable to fetch upstream', err);
-                            }
-                            reposList.push(repoFork.source);
-                            callback();
-                        });
-                    } else { // if not fork, no need for processing
-                        reposList.push(repo);
-                        callback();
-                    }
-                }, function allDone(err) { // when we are done processing forks..
-                    logger.debug('finished processing repos');
-                    if (!!err) {
-                        logger.error('unable to handle forks', err);
-                    }
-                    fnCallback(err, reposList);
-                });
-        }catch(e){
-            logger.error('unable to perform job',e);
-        }
-    });
-}
-
 function getPullRequests() {
-    getAllRepos(function (err, repos) {
+
+    github.getRateLimit(function(result){
+       logger.info('rate limit is',JSON.stringify(result.rate));
+    });
+
+    github.getAllRepositories({ignoreForks: true},function (err, repos) {
         initRepositoriesData(repos, function () {
             var repoQueries = [];
 
@@ -85,6 +41,7 @@ function getPullRequests() {
                 repoQueries.push({
                     user: repo.owner.login,
                     repo: repo.name,
+
                     state: 'open'
                 });
 
@@ -116,12 +73,15 @@ function sendPullRequestsEvent() {
         if (repo.issues > 0) {
             data.push({
                 name: name,
+                full_name: repo.full_name,
+                href: repo.href,
                 requests: repo.requests.length,
                 issues: repo.issues - repo.requests.length
             });
         }
     }
 
+    logger.trace('sending data',data);
     send_event('github_pull_requests', {items: data});
 }
 

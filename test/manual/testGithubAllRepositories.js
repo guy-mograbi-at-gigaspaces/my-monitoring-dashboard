@@ -13,6 +13,11 @@ github.getAllRepositories( { ignoreForks: true }, function(err, result){
     }else{
         result = _.compact(result);
         //logger.info(result);
-        logger.info('got all repositories', _.map(result, function( item ){ return { 'name' : item.name, 'full_name' : item.full_name } }) );
+        logger.info('got all repositories', _.map(result, function( item ){ return { 'name' : item.name } }) );
     }
 });
+
+
+//github.getRateLimit(function(err, response){
+//    logger.info(response);
+//});
