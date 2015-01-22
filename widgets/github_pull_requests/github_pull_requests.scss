@@ -1,17 +1,17 @@
 // ----------------------------------------------------------------------------
 // Sass declarations
 // ----------------------------------------------------------------------------
-$background-color:  #9c4274;
+$background-color:  #719C42;
 $value-color:       #fff;
 
 $title-color:       rgba(255, 255, 255, 0.9);
 $label-color:       rgba(255, 255, 255, 0.9);
-$update-color:      #622B4A;
+$update-color:      #445F26;
 
 // ----------------------------------------------------------------------------
 // Widget-list styles
 // ----------------------------------------------------------------------------
-.widget-jira-issues {
+.widget-github-pull-requests {
 
     background-color: $background-color;
     vertical-align: top !important;

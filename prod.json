@@ -4,6 +4,8 @@
     "apiUrl": "JIRA-API-URL"
   },
   "github": {
-    "token": "GITHUB-TOKEN-KEY-HERE"
+    "token": "GITHUB-TOKEN-KEY-HERE",
+    "user": "GITHUB-USERNAME",
+    "excludeRepos": []
   }
 }

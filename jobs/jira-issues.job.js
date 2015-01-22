@@ -44,7 +44,7 @@ function addUserIssue(issue) {
         addUserIssueStatus(userKey, issue.fields.status.name.toLowerCase());
     }
     catch (e) {
-        logger.info('addUserIssue:error', e, issue);
+        logger.error('addUserIssue:error', e, issue);
     }
 }
 
@@ -55,6 +55,7 @@ function addUserIssueStatus(userKey, status) {
 }
 
 function startJob() {
+    userIssues = {};
     getIssues(function (response) {
         getUsersIssues(response, function () {
             var data = [];
