@@ -1,7 +1,7 @@
 'use strict';
 
 var config = require('../config');
-var https = require('https');
+var jira = require('./modules/jira.module');
 var statuses = {
     Open: 0,
     Closed: 0,
@@ -9,21 +9,16 @@ var statuses = {
 };
 
 function getStatusData(fnCallback) {
-    https.get(config.jira.apiUrl + '/search?jql=project=CFY%20and%20component=UI&fields=status&maxResults=1000', function (res) {
-        var result = '';
-        res.on('data', function (chunk) {
-            result += chunk;
-        });
-        res.on('end', function () {
-            var obj = JSON.parse(result);
-            fnCallback(obj);
-        });
-    });
+    jira.getIssues({
+        jql: 'project=CFY and component=UI',
+        fields: 'assignee,status',
+        maxResults: '1000'
+    }, fnCallback);
 }
 
-function addStatusRecord(response, fnCallback) {
-    for (var i = 0; i < response.issues.length || fnCallback(); i++) {
-        var issue = response.issues[i];
+function addStatusRecord(issues, fnCallback) {
+    for (var i = 0; i < issues.length || fnCallback(); i++) {
+        var issue = issues[i];
         if (issue.fields.status !== null) {
             countStatus(issue.fields.status.name);
         }
@@ -37,8 +32,8 @@ function countStatus(status) {
 }
 
 function startJob() {
-    getStatusData(function (response) {
-        addStatusRecord(response, function () {
+    getStatusData(function (err, issues) {
+        addStatusRecord(issues, function () {
             var data = [];
             for (var status in statuses) {
                 data.push({

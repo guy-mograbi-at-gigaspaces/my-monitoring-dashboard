@@ -49,11 +49,12 @@ function getAllRepos(fnCallback) {
 function getPullRequests() {
     getAllRepos(function (err, repos) {
         initRepositoriesData(repos, function () {
-            var repoQuerys = [];
+            var repoQueries = [];
+
             for (var i in repos) {
                 var repo = repos[i];
 
-                repoQuerys.push({
+                repoQueries.push({
                     user: repo.owner.login,
                     repo: repo.name,
                     state: 'open'
@@ -62,7 +63,7 @@ function getPullRequests() {
                 repositories[repo.name].issues = repo.open_issues;
             }
 
-            github.getPullRequests(repoQuerys, function (err, reposRequests) {
+            github.getPullRequests(repoQueries, function (err, reposRequests) {
                 for (var i = 0; i < reposRequests.length || taskComplete(); i++) {
                     var repo = reposRequests[i];
                     repositories[repo.name].requests = repo.requests;
