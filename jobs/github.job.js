@@ -1,6 +1,11 @@
 var config = require('../config');
-var github = require('./modules/github.module');
+var Github = require('./modules/github.module');
 var _ = require('lodash');
+var async = require('async');
+var logger = require('log4js').getLogger('github.job');
+logger.trace('github conf is', config.github);
+var github = new Github(config.github); // todo: support multiple configurations
+
 
 var repositories = {};
 var totalRequests = 0;
@@ -12,42 +17,21 @@ function initRepositoriesData(repos, fnCallback) {
     for (var i = 0; i < repos.length || fnCallback(); i++) {
         var repo = repos[i];
         repositories[repo.name] = {
+            full_name: repo.full_name,
+            href : repo.html_url,
             requests: [],
             issues: 0
         }
     }
 }
 
-function getAllRepos(fnCallback) {
-    github.getReposByUser(config.github.user, function (err, repos) {
-        var reposList = [];
-
-        if(config.github.hasOwnProperty('excludeRepos') && config.github.excludeRepos.length > 0) {
-            repos = _.remove(repos, function(repo) {
-                return config.github.excludeRepos.indexOf(repo.name) === -1;
-            });
-        }
-
-        for (var i = 0; i < repos.length; i++) {
-            var repo = repos[i];
-
-            if (repo.fork) {
-                github.getRepo(repo.owner.login, repo.name, function (err, repoFork) {
-                    reposList.push(repoFork.source);
-
-                    if (reposList.length == repos.length) {
-                        fnCallback(null, reposList);
-                    }
-                });
-            } else {
-                reposList.push(repo);
-            }
-        }
-    });
-}
-
 function getPullRequests() {
-    getAllRepos(function (err, repos) {
+
+    github.getRateLimit(function(result){
+       logger.info('rate limit is',JSON.stringify(result.rate));
+    });
+
+    github.getAllRepositories({ignoreForks: true},function (err, repos) {
         initRepositoriesData(repos, function () {
             var repoQueries = [];
 
@@ -57,6 +41,7 @@ function getPullRequests() {
                 repoQueries.push({
                     user: repo.owner.login,
                     repo: repo.name,
+
                     state: 'open'
                 });
 
@@ -88,12 +73,15 @@ function sendPullRequestsEvent() {
         if (repo.issues > 0) {
             data.push({
                 name: name,
+                full_name: repo.full_name,
+                href: repo.href,
                 requests: repo.requests.length,
                 issues: repo.issues - repo.requests.length
             });
         }
     }
 
+    logger.trace('sending data',data);
     send_event('github_pull_requests', {items: data});
 }
 

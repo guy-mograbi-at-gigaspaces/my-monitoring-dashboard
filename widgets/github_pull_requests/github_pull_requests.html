@@ -2,12 +2,13 @@
 
 <ul class="list-nostyle">
     <li class="header">
-        <span class="label">Repository</span>
-        <span class="status">Requests</span>
-        <span class="status">Issues</span>
+        <span class="label">Rep</span>
+        <span class="status">Req</span>
+        <span class="status">Iss</span>
     </li>
-    <li data-foreach-item="items">
-        <span class="label" data-bind="item.name"></span>
+    <li data-foreach-item="items" data-bind-title="item.full_name">
+
+        <a data-bind-href="item.href"  target="_blank"><span class="label" style="display:inline-block; width:150px;  white-space:nowrap; text-overflow: ellipsis; overflow-x:hidden;" data-bind="item.name"></span></a>
         <span class="requests" data-bind="item.requests"></span>
         <span class="issues" data-bind="item.issues"></span>
     </li>
