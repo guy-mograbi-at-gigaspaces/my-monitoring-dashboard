@@ -26,10 +26,10 @@ function startJob() {
                 logger.error('error getting list-all-machines result.');
             }
 
-            logger.trace('list all machine result: ' + result);
-            logger.trace('total machines up' + result.total);
+            logger.trace('list all machine result: ' + JSON.stringify(result));
+            logger.trace('total machines up ' + result.total);
 
-            logger.trace('alerting the dashboard of list-all-machines', result.total );
+            logger.trace('alerting the dashboard of list-all-machines ', result.total );
 
             send_event('totalMachines', {current: result.total});
 
@@ -42,13 +42,6 @@ function startJob() {
 
 }
 
-/*var lastTotalIssues = 6;
-
-function myJob() {
-
-    send_event('totalAlerts', { moreinfo: lastTotalIssues });
-}*/
-
 try{
     logger.trace('setting interval on list-all-machines with ', config.listAllMachines.interval );
     setInterval(startJob, config.listAllMachines.interval);
@@ -58,4 +51,4 @@ try{
 }
 
 
-//startJob();
+
