@@ -8,5 +8,8 @@
     "token": "GITHUB-TOKEN-KEY-HERE",
     "user": "GITHUB-USERNAME",
     "excludeRepos": ["write-repo-name-here","and-another-here"]
+  },
+  "listAllMachines":{
+    "filePath":"/dev/list-all-machines.json"
   }
 }

@@ -4,7 +4,7 @@ var _ = require('lodash');
 var async = require('async');
 var logger = require('log4js').getLogger('github.job');
 logger.trace('github conf is', config.github);
-var github = new Github(config.github); // todo: support multiple configurations
+var github;
 
 
 var repositories = {};
@@ -27,35 +27,35 @@ function initRepositoriesData(repos, fnCallback) {
 
 function getPullRequests() {
 
-    github.getRateLimit(function(result){
-       logger.info('rate limit is',JSON.stringify(result.rate));
-    });
+        github.getRateLimit(function (result) {
+            logger.info('rate limit is', JSON.stringify(result.rate));
+        });
 
-    github.getAllRepositories({ignoreForks: true},function (err, repos) {
-        initRepositoriesData(repos, function () {
-            var repoQueries = [];
+        github.getAllRepositories({ignoreForks: true}, function (err, repos) {
+            initRepositoriesData(repos, function () {
+                var repoQueries = [];
 
-            for (var i in repos) {
-                var repo = repos[i];
+                for (var i in repos) {
+                    var repo = repos[i];
 
-                repoQueries.push({
-                    user: repo.owner.login,
-                    repo: repo.name,
+                    repoQueries.push({
+                        user: repo.owner.login,
+                        repo: repo.name,
 
-                    state: 'open'
-                });
+                        state: 'open'
+                    });
 
-                repositories[repo.name].issues = repo.open_issues;
-            }
-
-            github.getPullRequests(repoQueries, function (err, reposRequests) {
-                for (var i = 0; i < reposRequests.length || taskComplete(); i++) {
-                    var repo = reposRequests[i];
-                    repositories[repo.name].requests = repo.requests;
+                    repositories[repo.name].issues = repo.open_issues;
                 }
+
+                github.getPullRequests(repoQueries, function (err, reposRequests) {
+                    for (var i = 0; i < reposRequests.length || taskComplete(); i++) {
+                        var repo = reposRequests[i];
+                        repositories[repo.name].requests = repo.requests;
+                    }
+                });
             });
         });
-    });
 }
 
 function taskComplete() {
@@ -115,5 +115,19 @@ function sendTotalIssuesEvent() {
     });
 }
 
-setInterval(getPullRequests, config.pullingTime);
-getPullRequests();
+
+function performTask(){
+    github = new Github(config.github); // todo: support multiple configurations
+    if ( !!config.github ) {
+        try {
+            getPullRequests();
+        } catch (e) {
+            logger.error('unable to perform task', e);
+        }
+    }else{
+        logger.trace('skipping github job due to lack of configuration');
+    }
+}
+//
+//setInterval(performTask, config.pullingTime);
+//performTask();

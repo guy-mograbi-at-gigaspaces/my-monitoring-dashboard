@@ -62,5 +62,14 @@ function startJob() {
     });
 }
 
-setInterval(startJob, config.pullingTime);
-startJob();
+function performTask() {
+    try {
+        if (!!config.jira) {
+            startJob();
+        }
+    } catch (e) {
+        logger.error('unable to perform task', e);
+    }
+}
+setInterval( performTask, config.pullingTime);
+performTask();

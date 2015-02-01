@@ -6,25 +6,30 @@ block content
         ul
             li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
                 div(data-view='Image', data-image='/gigaspaces-cloudify.jpg' style='background-color: #ffffff')
+            li(data-row='1', data-col='4', data-sizex='1', data-sizey='1')
+                div(data-id='github_total_requests', data-view='Number', data-title='Total Pull Requests', data-moreinfo='In Requests')
             li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
                 div(data-view='Clock')
                 i.fa.fa-clock-o.icon-background
-            li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
-                div(data-id='github_total_requests', data-view='Number', data-title='Total Pull Requests', data-moreinfo='In Requests')
+
             li(data-row='1', data-col='2', data-sizex='1', data-sizey='1')
                 div(data-id='github_total_issues', data-view='Number', data-title='Total Issues', data-moreinfo='In Issues', style="background-color: #BB4747")
-
             li(data-row='1', data-col='2', data-sizex='2', data-sizey='1')
                 div(data-id='jira-issues', data-view='Jira_issues', data-unordered='true', data-title='Jira Issues', data-moreinfo='# of issues per user')
             li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
                 div(data-id='github_pull_requests', data-view='Github_pull_requests', data-unordered='true', data-title='Github Summary', data-moreinfo='# of open requests')
             li(data-row='1' data-col='1' data-sizex='1' data-sizey='1')
                 div(data-id='jira-status-pie' data-view='Fullpie' data-title='Jira Status')
+            li(data-row='2', data-col='4', data-sizex='1', data-sizey='1')
+                div(data-id='totalMachines', data-view='Number', data-title='Total Machines', data-moreinfo='Machines Up', style="background-color: #19599A")
+
+
+
 
 
 block scripts
     script.
-        $(function() {
+        $(function () {
             Dashing.gridsterLayout('[{"col":1,"row":1,"size_x":1,"size_y":1},{"col":2,"row":1,"size_x":1,"size_y":1},{"col":3,"row":1,"size_x":1,"size_y":1},{"col":3,"row":2,"size_x":1,"size_y":1},{"col":1,"row":2,"size_x":2,"size_y":1},{"col":4,"row":1,"size_x":2,"size_y":2},{"col":1,"row":3,"size_x":2,"size_y":1}]')
             Dashing.widget_base_dimensions = [370, 345]
             Dashing.numColumns = 5

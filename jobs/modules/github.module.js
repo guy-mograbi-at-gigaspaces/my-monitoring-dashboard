@@ -143,6 +143,9 @@ function Github( config ) {
      */
     function getAllRepositories(  opts, callback ){
 
+        if ( !opts.user ){
+            throw new Error('missing configuration [user]');
+        }
         logger.debug('getting all repositories');
         var result = [];
 
